@@ -1,5 +1,15 @@
-#!/usr/bin/python3.6
+#!/usr/bin/env python3
 #-*- coding:utf-8 -*-
+
+class MainGame:
+	def player_draw(self):
+		print("Player draw")
+
+	def dealer_draw(self):
+		print("Dealer draw")
+
+	def judge(self):
+		print("You win.")
 
 class Stock:
 	def __init__(self):
@@ -21,21 +31,27 @@ class GameManager:
 #		self.dealer = Dealer()
 		self.name = "pythonBeginner"
 
-	def judge(self):
-		print("You win.")
-
-def isContinue():
-	print("Continue? [yes/no]")
+def is_continue():
+	ans = input("Continue? [yes/no]\n")
+	if ans == "yes" or ans == "y" or ans == "Y":
+		print("YES")
+	elif ans == "no" or ans == "n" or ans == "N":
+		print("NO")
+	else:
+		print("Invalid input.")
+	
 	return False
 
 def main():
-	game = GameManager()
 
 	print("===== Game Start ===== ")
-	print("")
+
+	game = MainGame()
+	game.player_draw()
+	game.dealer_draw()
 
 	while True:
-		if not isContinue():
+		if not is_continue():
 			break
 
 	game.judge()
