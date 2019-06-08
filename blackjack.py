@@ -1,29 +1,89 @@
 #!/usr/bin/env python3
-
 import random
 
 SUITS = ('SPADE', 'HEART', 'DIAMOND', 'CLUB')
 RANKS = ('A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K')
 
 class MainGame:
-
-	def _draw_card(self, who, is_face_up):
-		print("_draw_card " + who + " " + str(is_face_up))
+	def __draw_card(self):
+		card = Card()
+		return card.draw_card()
 
 	def player_draw(self):
-		print("Player draw")
+		card = self.__draw_card()
+		print("Player draw {}".format(card))
+		num = card[1]
+		if num == 'J' or num == 'Q' or num == 'K':
+			num = 10
+		elif num == 'A':
+			num = 1
+		else:
+			num = int(num)
+		return num
 
 	def dealer_draw(self):
-		print("Dealer draw")
+		card = self.__draw_card()
+		print("Dealer draw {}".format(card))
+		num = card[1]
+		if num == 'J' or num == 'Q' or num == 'K':
+			num = 10
+		elif num == 'A':
+			num = 1
+		else:
+			num = int(num)
+		return num
 
-#	def get_num_of_card(self):
-#		return MainGame.num_of_card
+	def dealer_draw_hide(self):
+		card = self.__draw_card()
+		print("Dealer draw ***")
+		num = card[1]
+		if num == 'J' or num == 'Q' or num == 'K':
+			num = 10
+		elif num == 'A':
+			num = 1
+		else:
+			num = int(num)
+		return num
+
+	def dealers_turn(self, player_sum, dealer_sum):
+		# Dealer draws until the sum is 17 or more.
+		dealer_card = self.dealer_draw()
+		dealer_sum += dealer_card
+		while True:
+			if dealer_sum > 21:
+				print("Dealer's bust! [Dealer] Sum = {}".format(dealer_sum))
+				print("===== RESULT =====")
+				print('You win!')
+				break
+			elif dealer_sum >= 17 and dealer_sum <=21:
+				print("[Dealer] Sum = {}".format(dealer_sum))
+				print("===== RESULT =====")
+				break
+				if player_sum > dealer_sum:
+					print("===== RESULT =====")
+					print("You win!")
+					break
+				elif player_sum == dealer_sum:
+					print("===== RESULT =====")
+					print("Even!")
+					break
+				else:
+					print("===== RESULT =====")
+					print("You lose!")
+					break
+			else:
+				pass
 
 	def judge(self):
 		print("You win.")
 
 class Card:
-	def __init__(self, suit, rank):
+	'''
+	def __init__(self):
+		for suit in SUITS:
+			for rank in RANKS:
+				stock = [suit, rank]
+
 		if (suit in SUITS) and (rank in RANKS):
 			self.suit = suit
 			self.rank = rank
@@ -31,9 +91,13 @@ class Card:
 			self.suit = None
 			self.rank = None
 			print( "Invalid card: ", suit, rank )
+	'''
 
-	def get_card(self):
-		return (self.suit, self.rank)
+	def draw_card(self):
+		suit_index = random.randint(0, len(SUITS)-1)
+		rank_index = random.randint(0, len(RANKS)-1)
+#		return (self.list(suit_index, rand_index))
+		return (SUITS[suit_index], RANKS[rank_index])
 
 class Stock:
 	def __init__(self):
@@ -55,12 +119,6 @@ class Dealer:
 	def __init__(self):
 		pass
 
-class GameManager:
-	def __init__(self):
-#		self.player = Player()
-#		self.dealer = Dealer()
-		self.name = "pythonBeginner"
-
 def is_continue():
 	ans = input("Continue? [yes/no]\n")
 	if ans == "yes" or ans == "y" or ans == "Y":
@@ -75,33 +133,59 @@ def is_continue():
 	return True
 
 def main():
-	print("===== Game Start ===== ")
+	print("===== Game Start =====")
 
-	game = MainGame()
-	game.player_draw()
-	game.dealer_draw()
-#	print(game.get_num_of_card())
+	player_sum = 0
+	dealer_sum = 0
 
-	i = 0
-#	card = Card()
+	main_game = MainGame()
+
+	player_card = main_game.player_draw()
+	player_sum += player_card
+	player_card = main_game.player_draw()
+	player_sum += player_card
+
+	dealer_card = main_game.dealer_draw()
+	dealer_sum += dealer_card
+	dealer_card = main_game.dealer_draw_hide()
+	dealer_sum += dealer_card
+
+	print("")
+	print("[Player] Current Sum: {}".format(player_sum))
+
+	# Print all of the cards.
+#	list = []
+#	i = 0
+	'''
 	for suit in SUITS:
 		for rank in RANKS:
 			list = Card(suit, rank)
-			print(list.get_card())
+			print(list.draw_card())
+	'''
+#			list.append(Card(suit, rank))
 #			i += 1
-	
-#	print(list)
+#			print(list.draw_card())
+#	for x in list:
+#		print(x)
+#	print(list.draw_card())
 
-#	stock = Stock()
-#	print(stock.deal_card())
+	# Draw 52 cards randomly.
+
 
 	while True:
 		if is_continue() == True:
-			pass
+			player_card = main_game.player_draw()
+			player_sum += player_card
+			print('')
+			# Bust check.
+			if player_sum > 21:
+				print('Bust! You lose.')
+				break
+			print('')
+			print('[Player] Current Sum: {}'.format(player_sum))
 		else:
+			main_game.dealers_turn(player_sum, dealer_sum)
 			break
-
-	game.judge()
 
 if __name__ == '__main__':
 	main()
