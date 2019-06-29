@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import random
-
 import sys
 from time import sleep
 
@@ -16,8 +15,6 @@ class MainGame:
 		card_num = card.get_card(len(self.deck)) - 1
 		drawn_card = self.deck[card_num]
 		del self.deck[card_num]
-#		print(card_num)  # DEBUG
-#		print(len(self.deck))  # DEBUG
 		return drawn_card
 
 	def __add_num(self, who, card):
@@ -32,7 +29,8 @@ class MainGame:
 		if who == 'player':
 			self.player_sum += num
 			if self.__is_burst(self.player_sum) == False:
-				print('Burst! {} lose!'.format(who))
+				print("===== RESULT =====")
+				print("You're burst! [Player] Sum = {}".format(self.player_sum))
 				sys.exit(0)
 		elif who == 'dealer':
 			self.dealer_sum += num
@@ -67,42 +65,37 @@ class MainGame:
 		card = self.__draw_card()
 		print("Dealer draw ***")
 		self.__add_num('dealer', card)
+		return card
 
-	def dealers_turn(self):
-		card = self.__draw_card()
+	def dealers_turn(self, dealers_2nd_card):
 		# Dealer draws until the sum is 17 or more.
-
-		'''
-		dealer_card = self.dealer_draw()
-		dealer_sum += dealer_card
-		while True:
-			if dealer_sum > 21:
-				print("Dealer's bust! [Dealer] Sum = {}".format(dealer_sum))
+		print("Dealer's 2nd card was " + str(dealers_2nd_card))
+		while self.get_dealer_sum() <= 17:
+			print("DDDDD")
+			card = self.__draw_card()
+			print("Dealer draw {}".format(card))
+			self.__add_num('dealer', card)
+			if self.get_dealer_sum() > 21:
 				print("===== RESULT =====")
+				print("Dealer's burst! [Dealer] Sum = {}".format(dealer_sum))
 				print('You win!')
-				break
-			elif dealer_sum >= 17 and dealer_sum <=21:
-				print("[Dealer] Sum = {}".format(dealer_sum))
-				print("===== RESULT =====")
-				break
-				if player_sum > dealer_sum:
-					print("===== RESULT =====")
-					print("You win!")
-					break
-				elif player_sum == dealer_sum:
-					print("===== RESULT =====")
-					print("Even!")
-					break
-				else:
-					print("===== RESULT =====")
-					print("You lose!")
-					break
-			else:
-				pass
-		'''
+			sleep(1)
 
 	def judge(self):
-		print("You win.")
+		player_sum = self.get_player_sum()
+		dealer_sum = self.get_dealer_sum()
+		if player_sum > dealer_sum:
+				print("===== RESULT =====")
+				print('[Player] {} vs [Dealer] {}'.format(player_sum, dealer_sum))
+				print('You win!')
+		elif player_sum < dealer_sum:
+				print("===== RESULT =====")
+				print('[Player] {} vs [Dealer] {}'.format(player_sum, dealer_sum))
+				print('You lose!')
+		else:
+				print("===== RESULT =====")
+				print('[Player] {} vs [Dealer] {}'.format(player_sum, dealer_sum))
+				print('Even!')
 
 class Card:
 	SUITS = ('SPADE', 'HEART', 'DIAMOND', 'CLUB')
@@ -143,17 +136,13 @@ def main():
 	main_game.player_draw()
 	main_game.player_draw()
 	main_game.dealer_draw()
-	main_game.dealer_draw_hide()
+	dealers_2nd_card = main_game.dealer_draw_hide()
 
 	# Main game loop.
 	while is_continue() == True:
 		main_game.player_draw()
-# 		print('[Player] Current Sum = ', sum)
-#		card_num = card.draw_card(len(deck)-1)
-#		print(card_num, len(deck))  # DEBUG
-#		print(deck[card_num])  # DEBUG
 
-	main_game.dealers_turn()
+	main_game.dealers_turn(dealers_2nd_card)
 
 	main_game.judge()
 
